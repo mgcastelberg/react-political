@@ -11,6 +11,9 @@ import {
 } from 'chart.js';
 
 import { Bar } from 'react-chartjs-2';
+import type { Party } from '../types';
+import { useState } from 'react';
+import { PartyItem } from '../components/PartyItem';
 
 ChartJS.register(
     CategoryScale,
@@ -35,11 +38,11 @@ const PARTY_COLORS = [
 ];
 
 const PARTIES = [
-  { id: 1, name: 'Partido Rojo', votes: 35 },
-  { id: 2, name: 'Partido Azul', votes: 42 },
-  { id: 3, name: 'Partido Verde', votes: 28 },
-  { id: 4, name: 'Partido Amarillo', votes: 23 },
-  { id: 5, name: 'Partido Naranja', votes: 15 },
+  { id: '1', name: 'Partido Rojo', votes: 35 },
+  { id: '2', name: 'Partido Azul', votes: 42 },
+  { id: '3', name: 'Partido Verde', votes: 28 },
+  { id: '4', name: 'Partido Amarillo', votes: 23 },
+  { id: '5', name: 'Partido Naranja', votes: 15 },
 ];
 
 const chartOptions: ChartOptions<'bar'> = {
@@ -79,25 +82,49 @@ const chartOptions: ChartOptions<'bar'> = {
   },
 };
 
-const chartData: ChartData<'bar'> = {
-  labels: PARTIES.map((p) => p.name),
-  datasets: [
-    {
-      data: PARTIES.map((p) => p.votes),
-      backgroundColor: PARTY_COLORS.map((c) => c.bg),
-      borderColor: PARTY_COLORS.map((c) => c.border),
-      borderWidth: 2,
-    },
-  ],
-};
+const initialParties:Party[] = PARTIES.map( (party, i) => ({
+    ...party,
+    borderColor: PARTY_COLORS[i].border,
+    color: PARTY_COLORS[i].bg
+}));
 
 export const HomePage = () => {
 
-    // todo: replace with real data
+    const [parties, setParties] = useState<Party[]>(initialParties);
+
+    const updatePartyName = (id: string, newName: string) => {
+      // Todo
+    }
+
+    const updateVotes = (id: string, value: number) => {
+      // Todo
+    }
+
+    const addParty = () => {
+      // Todo
+    }
+
+    const removeParty = (id: string) => {
+      // Todo
+    }
+
+    const chartData: ChartData<'bar'> = {
+      labels: parties.map((p) => p.name),
+      datasets: [
+        {
+          data: parties.map((p) => p.votes),
+          backgroundColor: parties.map((c) => c.color),
+          borderColor: parties.map((c) => c.borderColor),
+          borderWidth: 2,
+        },
+      ],
+    };
+
     return (
         <div className='chart-container'>
 
             <h1>Resultados Electorales</h1>
+            <h3>Conexión: Conectado...</h3>
 
             <div className='chart-wrapper'>
 
@@ -105,6 +132,29 @@ export const HomePage = () => {
                 <Bar options={chartOptions} data={chartData} />
 
             </div>
+
+            <div className='controls-section'>
+                <div className='controls-header'>
+                  <h2>Configuración de partidos</h2>
+                  <button className='btn-add' onClick={addParty} >Agregar partido</button>
+                </div>
+
+                <div className='parties-list'>
+                  {parties.map((p) => (
+                    <PartyItem 
+                      key={p.id} 
+                      party={p} 
+                      onNameChange={ (newName) => updatePartyName(p.id, newName) } 
+                      onVotesChange={updateVotes} 
+                      onRemove={() =>removeParty(p.id)}
+                      canRemove={parties.length > 1}
+                    />
+                  ))}
+                </div>
+
+            </div>
+
+
             
         </div>
     )
