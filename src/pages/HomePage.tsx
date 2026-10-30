@@ -93,19 +93,35 @@ export const HomePage = () => {
     const [parties, setParties] = useState<Party[]>(initialParties);
 
     const updatePartyName = (id: string, newName: string) => {
-      // Todo
+      // console.log({ id, newName });
+      setParties( prev => prev.map((party) => (party.id === id ? { ...party, name: newName } : party)));
     }
 
     const updateVotes = (id: string, value: number) => {
-      // Todo
+      // console.log({ id, value });
+      setParties( prev => prev.map((party) => (
+        // party.id === id ? { ...party, votes: party.votes + value } : party
+        party.id === id ? { ...party, votes: Math.max(0, party.votes + value) } : party // Para que lagrafica no baje de 0
+      )));
     }
 
     const addParty = () => {
-      // Todo
+
+      const color = PARTY_COLORS[parties.length % PARTY_COLORS.length]; // Para que se repitan los colores
+
+      setParties( prev => [...prev, {
+        id: (prev.length + 1).toString(),
+        name: 'Nuevo Partido',
+        votes: 0,
+        color: color.bg,
+        borderColor: color.border
+      }]);
     }
 
     const removeParty = (id: string) => {
-      // Todo
+      const currentParties = parties.filter((p) => p.id !== id);
+      setParties(currentParties);
+      // setParties( prev => prev.filter((p) => p.id !== id)); //Ambas funcionan
     }
 
     const chartData: ChartData<'bar'> = {
@@ -124,7 +140,7 @@ export const HomePage = () => {
         <div className='chart-container'>
 
             <h1>Resultados Electorales</h1>
-            <h3>Conexión: Conectado...</h3>
+            <h3>Conexión: Conectando...</h3>
 
             <div className='chart-wrapper'>
 
